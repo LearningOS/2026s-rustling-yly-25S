@@ -4,9 +4,32 @@
 	you can use bubble sorting, insertion sorting, heap sorting, etc.
 */
 // I AM NOT DONE
+fn merge_sort<T>(array: &mut [T]) where T: Ord + Copy{
+    let len = array.len();
+    if len <= 1 {
+        return;
+    }
+    let mid = len / 2;
+    let (fst, snd) = array.split_at_mut(mid);
+    merge_sort(fst);
+    merge_sort(snd);
+    merge(fst, snd);
+}
 
-fn sort<T>(array: &mut [T]){
-	//TODO
+fn merge<T>(array_l: &mut [T], array_r: &mut [T]) where T: Ord + Copy {
+    for i in 0..array_l.len() {
+        for j in 0..array_r.len() {
+            if array_l[i] > array_r[j] {
+                let temp = array_l[i];
+                array_l[i] = array_r[j];
+                array_r[j] = temp;
+            }
+        }
+    }
+}
+
+fn sort<T>(array: &mut [T]) where T: Ord + Copy{
+	merge_sort(array);
 }
 #[cfg(test)]
 mod tests {
