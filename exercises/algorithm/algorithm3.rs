@@ -3,13 +3,12 @@
 	This problem requires you to implement a sorting algorithm
 	you can use bubble sorting, insertion sorting, heap sorting, etc.
 */
-// I AM NOT DONE
 fn merge_sort<T>(array: &mut [T]) where T: Ord + Copy{
     let len = array.len();
     if len <= 1 {
         return;
     }
-    let mid = len / 2;
+    let mid = len / 2 ;
     let (fst, snd) = array.split_at_mut(mid);
     merge_sort(fst);
     merge_sort(snd);
@@ -17,15 +16,29 @@ fn merge_sort<T>(array: &mut [T]) where T: Ord + Copy{
 }
 
 fn merge<T>(array_l: &mut [T], array_r: &mut [T]) where T: Ord + Copy {
-    for i in 0..array_l.len() {
-        for j in 0..array_r.len() {
-            if array_l[i] > array_r[j] {
-                let temp = array_l[i];
-                array_l[i] = array_r[j];
-                array_r[j] = temp;
-            }
+    if array_l.len() == 0 || array_r.len() == 0 {
+        return;
+    }
+    let mut l_cur= 0;
+    let mut r_cur= 0;
+    let mut temp: Vec<T> = Vec::new();
+    while l_cur < array_l.len() && r_cur < array_r.len() {
+        if array_l[l_cur] <= array_r[r_cur] {
+            temp.push(array_l[l_cur]);
+            l_cur += 1;
+        } else {
+            temp.push(array_r[r_cur]);
+            r_cur += 1;
         }
     }
+    if l_cur != array_l.len() {
+        temp.extend_from_slice(&array_l[l_cur..]);
+    } else {
+        temp.extend_from_slice(&array_r[r_cur..]);
+    }
+    let (new_l, new_r) = temp.split_at_mut(array_l.len());
+    array_l.copy_from_slice(new_l);
+    array_r.copy_from_slice(new_r);
 }
 
 fn sort<T>(array: &mut [T]) where T: Ord + Copy{
