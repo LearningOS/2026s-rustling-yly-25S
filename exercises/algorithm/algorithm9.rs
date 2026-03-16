@@ -1,8 +1,7 @@
 /*
-	heap
-	This question requires you to implement a binary heap function
+        heap
+        This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -38,8 +37,46 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.items.push(value);
+        self.count += 1;
+        let cur_idx: usize = self.count;
+        self.maintain(cur_idx);
+        // maintain heap property
+
     }
 
+    fn maintain(&mut self, mut cur_idx: usize) {
+        let mut parent_idx = self.parent_idx(cur_idx);
+        while parent_idx > 0 && (self.comparator)(&self.items[cur_idx], &self.items[parent_idx]) {
+            self.items.swap(cur_idx, parent_idx);
+            cur_idx = parent_idx;
+            parent_idx = self.parent_idx(parent_idx);
+        }
+    }
+
+    fn pop(&mut self) -> Option<T> {
+        // swap root with the last child , then delete the last child and use self.maintain
+        if self.is_empty() {
+            return None;
+        }
+        // use swap instead of cloning
+        // swap root (index 1) with last element (index count)
+        self.items.swap(1, self.count);
+        let result = self.items.pop().unwrap(); // wont reach
+        self.count -= 1;
+
+        let mut cur_idx = 1;
+        while let Some(child_idx) = self.smallest_child_idx(cur_idx) {
+            if child_idx >= 1 && child_idx <= self.count && (self.comparator)(&self.items[child_idx], &self.items[cur_idx]) {
+                self.items.swap(cur_idx, child_idx);
+                cur_idx = child_idx;
+            } else {
+                break;
+            }
+        }
+
+        Some(result)
+    }
     fn parent_idx(&self, idx: usize) -> usize {
         idx / 2
     }
@@ -56,9 +93,19 @@ where
         self.left_child_idx(idx) + 1
     }
 
-    fn smallest_child_idx(&self, idx: usize) -> usize {
+    fn smallest_child_idx(&self, idx: usize) -> Option<usize> {
         //TODO
-		0
+        if self.left_child_idx(idx) > self.count {
+            return None; // no children
+        }
+        if self.right_child_idx(idx) > self.count {
+            return Some(self.left_child_idx(idx)); // only left child
+        }
+        if (self.comparator)(&self.items[self.left_child_idx(idx)], &self.items[self.right_child_idx(idx)]) {
+            return Some(self.left_child_idx(idx));
+        } else {
+            return Some(self.right_child_idx(idx));
+        }
     }
 }
 
@@ -85,7 +132,7 @@ where
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+                self.pop()
     }
 }
 
